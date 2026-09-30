@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'pandav-core'
+    metrics_path: '/api/kpi'
+    static_configs:
+      - targets: ['pandav-core:3000']
+
+  - job_name: 'nakula-reliability'
+    static_configs:
+      - targets: ['localhost:9090']

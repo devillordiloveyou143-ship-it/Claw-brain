@@ -1,0 +1,23 @@
+{
+  "name": "pandav-ai",
+  "version": "1.0.0",
+  "description": "Pandav AI: One-Prompt Autonomous AI Engineering & DevSecOps Platform",
+  "main": "apps/api/src/server.js",
+  "scripts": {
+    "start": "node apps/api/src/server.js",
+    "test": "node tests/runner.js",
+    "test:unit": "node tests/unit/index.test.js",
+    "test:integration": "node tests/integration/index.test.js",
+    "test:e2e": "node tests/e2e/index.test.js"
+  },
+  "keywords": [
+    "autonomous-agents",
+    "devsecops",
+    "ai-orchestration",
+    "sandboxing",
+    "self-healing",
+    "pandav-ai"
+  ],
+  "author": "PANDAV AI Systems Architecture Team",
+  "license": "Apache-2.0"
+}

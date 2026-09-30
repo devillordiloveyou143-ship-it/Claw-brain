@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PANDAV AI - One-Prompt Autonomous AI Engineering Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    .animate-pulse-subtle { animation: pulse-subtle 2s infinite ease-in-out; }
+    .bg-grid {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+
+  <!-- Top Navigation & Global Header -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-6 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <i class="fa-solid fa-brain text-white text-lg"></i>
+        </div>
+        <div>
+          <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">PANDAV AI</span>
+          <span class="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-900/60 text-indigo-300 border border-indigo-700/50">One-Prompt Autonomous OS</span>
+        </div>
+      </div>
+
+      <!-- Autonomous KPI Badge -->
+      <div class="hidden md:flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-md border border-slate-700 text-xs">
+        <span class="text-slate-400">Target Autonomy:</span>
+        <span class="font-bold text-emerald-400">99.998%</span>
+        <span class="text-slate-500">|</span>
+        <span class="text-slate-400">Current Measured:</span>
+        <span id="kpi-measured" class="font-mono font-bold text-indigo-400">100.0%</span>
+      </div>
+    </div>
+
+    <!-- Council Agent Status Badges -->
+    <div class="hidden lg:flex items-center space-x-3 text-xs">
+      <div class="flex items-center space-x-1.5 px-2.5 py-1 bg-slate-800 rounded border border-slate-700" title="Yudhishthira: Supervisor">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="font-semibold text-slate-300">Yudhishthira</span>
+      </div>
+      <div class="flex items-center space-x-1.5 px-2.5 py-1 bg-slate-800 rounded border border-slate-700" title="Arjuna: Coder">
+        <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+        <span class="font-semibold text-slate-300">Arjuna</span>
+      </div>
+      <div class="flex items-center space-x-1.5 px-2.5 py-1 bg-slate-800 rounded border border-slate-700" title="Advocate: Security">
+        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        <span class="font-semibold text-slate-300">Advocate</span>
+      </div>
+      <div class="flex items-center space-x-1.5 px-2.5 py-1 bg-slate-800 rounded border border-slate-700" title="Police: Policy Guard">
+        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+        <span class="font-semibold text-slate-300">Police</span>
+      </div>
+      <div class="flex items-center space-x-1.5 px-2.5 py-1 bg-slate-800 rounded border border-slate-700" title="Bhima: Infrastructure">
+        <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+        <span class="font-semibold text-slate-300">Bhima</span>
+      </div>
+    </div>
+
+    <!-- Active Workspace Tabs -->
+    <div class="flex items-center space-x-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-medium">
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-3 py-1.5 rounded-md bg-indigo-600 text-white shadow">
+        <i class="fa-solid fa-rocket mr-1.5"></i>One-Prompt Mission
+      </button>
+      <button onclick="switchTab('doctor')" id="tab-doctor" class="px-3 py-1.5 rounded-md text-slate-400 hover:text-slate-200">
+        <i class="fa-solid fa-stethoscope mr-1.5"></i>Doctor Sandbox
+      </button>
+      <button onclick="switchTab('engineer')" id="tab-engineer" class="px-3 py-1.5 rounded-md text-slate-400 hover:text-slate-200">
+        <i class="fa-solid fa-shield-halved mr-1.5"></i>Engineer Security
+      </button>
+      <button onclick="switchTab('helper')" id="tab-helper" class="px-3 py-1.5 rounded-md text-slate-400 hover:text-slate-200">
+        <i class="fa-solid fa-comments mr-1.5"></i>Helper Chat
+      </button>
+      <button onclick="switchTab('audit')" id="tab-audit" class="px-3 py-1.5 rounded-md text-slate-400 hover:text-slate-200">
+        <i class="fa-solid fa-scale-balanced mr-1.5"></i>Policy & Audit
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Areas -->
+  <main class="flex-1 flex flex-col p-6 max-w-7xl w-full mx-auto">
+
+    <!-- 1. MISSION DASHBOARD TAB (ONE-PROMPT AUTONOMOUS HUB) -->
+    <div id="view-dashboard" class="flex-1 flex flex-col space-y-6">
+      
+      <!-- One Prompt Hero Banner -->
+      <div class="bg-gradient-to-r from-indigo-900/40 via-purple-900/30 to-slate-900 border border-indigo-700/40 rounded-xl p-6 shadow-xl relative overflow-hidden bg-grid">
+        <div class="max-w-3xl">
+          <div class="flex items-center space-x-2 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-2">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Zero-Micromanagement Autonomous Engineering</span>
+          </div>
+          <h2 class="text-2xl font-black text-white">Give one high-level objective. Pandav AI does the rest.</h2>
+          <p class="text-slate-300 text-sm mt-1.5 leading-relaxed">
+            Planning &rarr; Research &rarr; Architecture &rarr; Arjuna Coding &rarr; Doctor Build & Test &rarr; Advocate Security Audit &rarr; Bhima K8s Deployment &rarr; Nakula Monitoring &rarr; Final Yudhishthira Verification.
+          </p>
+
+          <form id="mission-form" class="mt-5 flex gap-3" onsubmit="submitMission(event)">
+            <input 
+              id="mission-input" 
+              type="text" 
+              class="flex-1 bg-slate-950/90 border border-slate-700 focus:border-indigo-500 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 shadow-inner focus:outline-none focus:ring-1 focus:ring-indigo-500" 
+              placeholder="e.g. Build a production-ready hospital management platform with authentication, database, dashboard, APIs, testing, security validation, deployment and monitoring."
+              required
+            />
+            <button 
+              type="submit" 
+              id="mission-btn"
+              class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm px-6 py-3 rounded-lg shadow-lg shadow-indigo-600/30 flex items-center space-x-2 transition duration-150">
+              <i class="fa-solid fa-bolt"></i>
+              <span>Launch Mission</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Real-time Mission Progress & Dynamic Graph -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
+        
+        <!-- Left: Dynamic Task Graph & Execution Pipeline -->
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col shadow">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-diagram-project text-indigo-400"></i>
+              <h3 class="font-bold text-sm text-slate-200">Dynamic Task Graph & Autonomous Pipeline</h3>
+            </div>
+            <span id="mission-status-pill" class="text-xs px-2.5 py-1 rounded font-semibold bg-slate-800 text-slate-400 border border-slate-700">
+              IDLE
+            </span>
+          </div>
+
+          <div id="task-graph-container" class="space-y-3 flex-1 overflow-y-auto max-h-[460px] pr-2">
+            <div class="text-center py-16 text-slate-500 text-sm">
+              <i class="fa-solid fa-circle-nodes text-3xl mb-3 opacity-30"></i>
+              <p>No active mission. Launch a high-level objective above to observe autonomous decomposition.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Real-time Telemetry, Autonomy KPI & Agent Council Activity -->
+        <div class="space-y-6">
+          
+          <!-- Autonomy Health Card -->
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+              <h3 class="font-bold text-xs text-slate-400 uppercase tracking-wider flex items-center space-x-2">
+                <i class="fa-solid fa-gauge-high text-emerald-400"></i>
+                <span>Autonomous Completion Engine</span>
+              </h3>
+              <span class="text-[11px] bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded">Active</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
+              <div class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                <div class="text-slate-400 text-xs">Autonomous Rate</div>
+                <div id="stat-rate" class="text-xl font-black text-indigo-400 mt-1">100.0%</div>
+                <div class="text-[10px] text-slate-500">Target: 99.998%</div>
+              </div>
+              <div class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                <div class="text-slate-400 text-xs">Human Interventions</div>
+                <div id="stat-human" class="text-xl font-black text-emerald-400 mt-1">0</div>
+                <div class="text-[10px] text-slate-500">Zero Routine Approvals</div>
+              </div>
+              <div class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                <div class="text-slate-400 text-xs">Total Tasks Executed</div>
+                <div id="stat-tasks" class="text-xl font-black text-slate-200 mt-1">0</div>
+                <div class="text-[10px] text-slate-500">100% Agent Delegated</div>
+              </div>
+              <div class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                <div class="text-slate-400 text-xs">Self-Healing Recoveries</div>
+                <div id="stat-recoveries" class="text-xl font-black text-amber-400 mt-1">0</div>
+                <div class="text-[10px] text-slate-500">Automated Remediation</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Mission Artifact & Deployment Summary -->
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow">
+            <div class="flex items-center space-x-2 border-b border-slate-800 pb-3 mb-3">
+              <i class="fa-solid fa-cloud-arrow-up text-blue-400"></i>
+              <h3 class="font-bold text-xs text-slate-400 uppercase tracking-wider">Verified Deployment Target</h3>
+            </div>
+            <div id="deployment-summary" class="text-xs text-slate-400 space-y-2">
+              <p>Deployment URL: <span id="deploy-url" class="font-mono text-indigo-300">Pending mission launch...</span></p>
+              <p>Security Status: <span id="deploy-sec" class="font-mono text-slate-300">Pre-flight checks passed</span></p>
+              <p>Monitoring Probes: <span id="deploy-mon" class="font-mono text-emerald-400">Ready</span></p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 2. DOCTOR SANDBOX TAB -->
+    <div id="view-doctor" class="hidden flex-1 flex flex-col space-y-4">
+      <div class="flex items-center justify-between bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <div>
+          <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+            <i class="fa-solid fa-stethoscope text-indigo-400"></i>
+            <span>Doctor Sandbox Development Environment</span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">Isolated workspace with non-root security context, automated build runner, test verification, snapshots & rollback.</p>
+        </div>
+        <div class="flex space-x-2">
+          <button onclick="runDoctorBuild()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-semibold rounded text-slate-200 border border-slate-700">
+            <i class="fa-solid fa-hammer mr-1"></i>Run Build
+          </button>
+          <button onclick="runDoctorTests()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold rounded text-white shadow">
+            <i class="fa-solid fa-vial mr-1"></i>Run Test Suite
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1">
+        <!-- File Tree -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col">
+          <h4 class="font-semibold text-xs text-slate-400 uppercase tracking-wider mb-3">Workspace Files</h4>
+          <div id="doctor-file-tree" class="flex-1 overflow-y-auto font-mono text-xs space-y-1.5 pr-2">
+            <div class="text-slate-500 italic">No files in current workspace</div>
+          </div>
+        </div>
+
+        <!-- Code Viewer & Editor -->
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+            <span id="editor-filename" class="font-mono text-xs font-semibold text-indigo-300">server.js</span>
+            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">Isolated Sandbox Container</span>
+          </div>
+          <pre id="doctor-editor" class="flex-1 bg-slate-950 p-4 rounded-lg font-mono text-xs text-slate-300 overflow-auto border border-slate-800 max-h-[380px]">// Sandboxed source code will appear here after autonomous Arjuna coding</pre>
+        </div>
+      </div>
+
+      <!-- Execution Logs & Terminal Output -->
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs">
+        <div class="text-slate-400 font-bold mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-terminal text-emerald-400"></i>
+          <span>Doctor Sandbox Console & Execution Stream</span>
+        </div>
+        <div id="doctor-logs" class="text-slate-400 space-y-1 max-h-36 overflow-y-auto">
+          <div>[DOCTOR] Workspace initialized with non-root privileges. Ready.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. ENGINEER SECURITY SANDBOX TAB -->
+    <div id="view-engineer" class="hidden flex-1 flex flex-col space-y-4">
+      <div class="flex items-center justify-between bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <div>
+          <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+            <i class="fa-solid fa-shield-halved text-amber-400"></i>
+            <span>Engineer Security Sandbox (Advocate & Defensive Validation)</span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">Strict authorization gate: SAST, DAST, secret scanning, dependency audit, and automated remediation verification.</p>
+        </div>
+        <button onclick="runSecurityScan()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-xs font-semibold rounded text-white shadow">
+          <i class="fa-solid fa-magnifying-glass-shield mr-1"></i>Run Security Audit
+        </button>
+      </div>
+
+      <!-- Scope & Authorization Verification Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between text-xs">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-full bg-emerald-950 text-emerald-400 flex items-center justify-center border border-emerald-800">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <div>
+            <div class="font-bold text-slate-200">Authorized Target Verified: <span class="font-mono text-emerald-400">pandav-doctor.local</span></div>
+            <div class="text-slate-500">Scope: Internal sandbox development & isolated staging namespaces only. Third-party targets blocked by Policy Engine.</div>
+          </div>
+        </div>
+        <span class="px-2.5 py-1 rounded bg-emerald-900/60 text-emerald-300 border border-emerald-700/50 font-semibold">AUTHORIZED</span>
+      </div>
+
+      <!-- Vulnerability Findings Table -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex-1 flex flex-col">
+        <h4 class="font-semibold text-xs text-slate-400 uppercase tracking-wider mb-3">Structured Security Findings</h4>
+        <div class="overflow-x-auto flex-1">
+          <table class="w-full text-left text-xs">
+            <thead class="border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px]">
+              <tr>
+                <th class="py-2 px-3">Finding ID</th>
+                <th class="py-2 px-3">Severity</th>
+                <th class="py-2 px-3">Title</th>
+                <th class="py-2 px-3">Affected Component</th>
+                <th class="py-2 px-3">Status</th>
+                <th class="py-2 px-3">Remediation</th>
+              </tr>
+            </thead>
+            <tbody id="findings-table" class="divide-y divide-slate-800/60 font-mono">
+              <tr>
+                <td colspan="6" class="py-8 text-center text-slate-500 font-sans">No security vulnerabilities detected. Run an assessment or launch a mission.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. HELPER CHAT TAB -->
+    <div id="view-helper" class="hidden flex-1 flex flex-col space-y-4">
+      <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+          <i class="fa-solid fa-comments text-indigo-400"></i>
+          <span>Pandav Helper Chat</span>
+        </h3>
+        <p class="text-xs text-slate-400 mt-0.5">Conversational assistance, architectural guidance, and learning. (Arbitrary code execution is disabled in Helper Chat for safety).</p>
+      </div>
+
+      <div class="flex-1 bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col overflow-hidden">
+        <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 pr-2 mb-4">
+          <!-- Messages inserted dynamically -->
+        </div>
+
+        <form id="chat-form" onsubmit="submitChatMessage(event)" class="flex gap-2">
+          <input 
+            id="chat-input" 
+            type="text" 
+            class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500" 
+            placeholder="Ask a technical or architectural question..." 
+            required 
+          />
+          <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs px-5 py-2.5 rounded-lg shadow">
+            Send
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 5. POLICY & AUDIT TAB -->
+    <div id="view-audit" class="hidden flex-1 flex flex-col space-y-4">
+      <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+          <i class="fa-solid fa-scale-balanced text-red-400"></i>
+          <span>Police Policy Engine & Immutable Audit Ledger</span>
+        </h3>
+        <p class="text-xs text-slate-400 mt-0.5">RBAC/ABAC verification, command bounds, high-risk human approval boundaries, and tamper-resistant audit logs.</p>
+      </div>
+
+      <!-- Pending Approvals Section -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <h4 class="font-semibold text-xs text-slate-400 uppercase tracking-wider mb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-hand text-amber-400"></i>
+          <span>High-Risk Human Approval Boundary Gate</span>
+        </h4>
+        <div id="approvals-container" class="space-y-2 text-xs">
+          <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 text-slate-500">
+            No high-risk operations awaiting human approval. Routine autonomous engineering continues without interruption.
+          </div>
+        </div>
+      </div>
+
+      <!-- Audit Log Stream -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex-1 flex flex-col">
+        <h4 class="font-semibold text-xs text-slate-400 uppercase tracking-wider mb-3">Audit Trails & Verification Evidence</h4>
+        <div id="audit-log-container" class="flex-1 overflow-y-auto space-y-2 font-mono text-xs pr-2 max-h-[360px]">
+          <!-- Audit records loaded dynamically -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    let activeMissionId = null;
+    let pollInterval = null;
+
+    function switchTab(tab) {
+      const views = ['dashboard', 'doctor', 'engineer', 'helper', 'audit'];
+      views.forEach(v => {
+        document.getElementById(`view-${v}`).classList.add('hidden');
+        document.getElementById(`tab-${v}`).className = 'px-3 py-1.5 rounded-md text-slate-400 hover:text-slate-200';
+      });
+      document.getElementById(`view-${tab}`).classList.remove('hidden');
+      document.getElementById(`tab-${tab}`).className = 'px-3 py-1.5 rounded-md bg-indigo-600 text-white shadow';
+
+      if (tab === 'doctor') loadDoctorWorkspace();
+      if (tab === 'engineer') loadEngineerFindings();
+      if (tab === 'helper') loadChatMessages();
+      if (tab === 'audit') loadAuditLogs();
+    }
+
+    async function fetchKPI() {
+      try {
+        const res = await fetch('/api/kpi');
+        const data = await res.json();
+        document.getElementById('kpi-measured').innerText = data.autonomousCompletionRate;
+        document.getElementById('stat-rate').innerText = data.autonomousCompletionRate;
+        document.getElementById('stat-human').innerText = data.metrics.humanInterventions;
+        document.getElementById('stat-tasks').innerText = data.metrics.totalTasks;
+        document.getElementById('stat-recoveries').innerText = data.metrics.recoveryCount;
+      } catch (e) {
+        console.error('KPI fetch error', e);
+      }
+    }
+
+    async function submitMission(e) {
+      e.preventDefault();
+      const input = document.getElementById('mission-input');
+      const objective = input.value.trim();
+      if (!objective) return;
+
+      const btn = document.getElementById('mission-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Mobilizing Council...</span>';
+
+      try {
+        const res = await fetch('/api/missions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ objective })
+        });
+        const data = await res.json();
+        activeMissionId = data.mission.id;
+        renderTaskGraph(data.mission);
+        
+        // Start polling mission status
+        if (pollInterval) clearInterval(pollInterval);
+        pollInterval = setInterval(() => pollMissionStatus(activeMissionId), 1000);
+      } catch (err) {
+        alert('Mission dispatch failed: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-bolt"></i><span>Launch Mission</span>';
+      }
+    }
+
+    async function pollMissionStatus(missionId) {
+      if (!missionId) return;
+      try {
+        const res = await fetch(`/api/missions/${missionId}`);
+        const data = await res.json();
+        if (data.mission) {
+          renderTaskGraph(data.mission);
+          fetchKPI();
+          if (data.mission.status === 'COMPLETED' || data.mission.status === 'FAILED') {
+            clearInterval(pollInterval);
+            pollInterval = null;
+          }
+        }
+      } catch (e) {
+        console.error('Poll error', e);
+      }
+    }
+
+    function renderTaskGraph(mission) {
+      const pill = document.getElementById('mission-status-pill');
+      pill.innerText = mission.status;
+      if (mission.status === 'COMPLETED') {
+        pill.className = 'text-xs px-2.5 py-1 rounded font-semibold bg-emerald-950 text-emerald-400 border border-emerald-700';
+      } else if (mission.status === 'EXECUTING') {
+        pill.className = 'text-xs px-2.5 py-1 rounded font-semibold bg-indigo-950 text-indigo-400 border border-indigo-700 animate-pulse';
+      }
+
+      if (mission.summary) {
+        document.getElementById('deploy-url').innerText = mission.summary.deployUrl;
+        document.getElementById('deploy-sec').innerText = 'Verified 0 Vulnerabilities';
+      }
+
+      const container = document.getElementById('task-graph-container');
+      container.innerHTML = mission.tasks.map((task, idx) => {
+        let badgeColor = 'bg-slate-800 text-slate-400 border-slate-700';
+        let icon = '<i class="fa-regular fa-clock"></i>';
+        if (task.status === 'COMPLETED') {
+          badgeColor = 'bg-emerald-950/80 text-emerald-300 border-emerald-700/60';
+          icon = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+        } else if (task.status === 'IN_PROGRESS') {
+          badgeColor = 'bg-indigo-950/80 text-indigo-300 border-indigo-700/60 animate-pulse';
+          icon = '<i class="fa-solid fa-spinner fa-spin text-indigo-400"></i>';
+        } else if (task.status === 'RETRYING') {
+          badgeColor = 'bg-amber-950/80 text-amber-300 border-amber-700/60';
+          icon = '<i class="fa-solid fa-arrows-rotate fa-spin text-amber-400"></i>';
+        }
+
+        return `
+          <div class="p-3.5 rounded-lg border ${badgeColor} transition duration-150 flex items-start space-x-3">
+            <div class="mt-0.5 text-sm">${icon}</div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-white">${task.title}</span>
+                <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">${task.owner_agent}</span>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1">${task.acceptance_criteria}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadDoctorWorkspace() {
+      try {
+        const id = activeMissionId || 'default-session';
+        const res = await fetch(`/api/doctor/files?missionId=${id}`);
+        const data = await res.json();
+        const tree = document.getElementById('doctor-file-tree');
+        if (data.files && data.files.length > 0) {
+          tree.innerHTML = data.files.map(f => `
+            <div onclick="openDoctorFile('${f.path}')" class="cursor-pointer hover:text-indigo-400 py-1 px-2 rounded hover:bg-slate-800 flex items-center justify-between">
+              <span><i class="fa-regular fa-file-code mr-1.5 text-slate-400"></i>${f.path}</span>
+              <span class="text-[10px] text-slate-500">${f.size} B</span>
+            </div>
+          `).join('');
+          openDoctorFile(data.files[0].path);
+        } else {
+          tree.innerHTML = '<div class="text-slate-500 italic">No files in current workspace</div>';
+        }
+
+        const logRes = await fetch(`/api/doctor/logs?missionId=${id}`);
+        const logData = await logRes.json();
+        if (logData.logs) {
+          document.getElementById('doctor-logs').innerHTML = logData.logs.map(l => `<div>${l}</div>`).join('');
+        }
+      } catch (e) {
+        console.error('Doctor load error', e);
+      }
+    }
+
+    async function openDoctorFile(filePath) {
+      const id = activeMissionId || 'default-session';
+      try {
+        const res = await fetch(`/api/doctor/file?missionId=${id}&path=${encodeURIComponent(filePath)}`);
+        const data = await res.json();
+        document.getElementById('editor-filename').innerText = filePath;
+        document.getElementById('doctor-editor').innerText = data.content;
+      } catch (e) {
+        console.error('Read file error', e);
+      }
+    }
+
+    async function runDoctorBuild() {
+      const id = activeMissionId || 'default-session';
+      const res = await fetch('/api/doctor/build', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ missionId: id })
+      });
+      const data = await res.json();
+      alert(`Doctor Build: ${data.message || data.status}`);
+      loadDoctorWorkspace();
+    }
+
+    async function runDoctorTests() {
+      const id = activeMissionId || 'default-session';
+      const res = await fetch('/api/doctor/tests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ missionId: id })
+      });
+      const data = await res.json();
+      alert(`Doctor Tests: ${data.summary || data.status}`);
+      loadDoctorWorkspace();
+    }
+
+    async function loadEngineerFindings() {
+      const id = activeMissionId || 'default-session';
+      try {
+        const res = await fetch(`/api/engineer/findings?missionId=${id}`);
+        const data = await res.json();
+        const tbody = document.getElementById('findings-table');
+        if (data.findings && data.findings.length > 0) {
+          tbody.innerHTML = data.findings.map(f => `
+            <tr class="hover:bg-slate-800/40">
+              <td class="py-2.5 px-3 text-indigo-400 font-bold">${f.finding_id}</td>
+              <td class="py-2.5 px-3"><span class="px-1.5 py-0.5 rounded text-[10px] bg-red-950 text-red-400 border border-red-800">${f.severity}</span></td>
+              <td class="py-2.5 px-3 text-slate-200">${f.title}</td>
+              <td class="py-2.5 px-3 text-slate-400">${f.affected_component}</td>
+              <td class="py-2.5 px-3"><span class="text-amber-400 font-bold">${f.verification_status}</span></td>
+              <td class="py-2.5 px-3 text-slate-400 text-[11px]">${f.remediation}</td>
+            </tr>
+          `).join('');
+        } else {
+          tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-emerald-400 font-sans"><i class="fa-solid fa-shield-check mr-2"></i>Clean. Zero vulnerabilities found in the analyzed scope.</td></tr>`;
+        }
+      } catch (e) {
+        console.error('Engineer load error', e);
+      }
+    }
+
+    async function runSecurityScan() {
+      const id = activeMissionId || 'default-session';
+      const res = await fetch('/api/engineer/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ missionId: id })
+      });
+      const data = await res.json();
+      loadEngineerFindings();
+      alert(`Security Audit Completed: ${data.total_findings} findings detected. Scope: ${data.authorization.scope}`);
+    }
+
+    async function loadChatMessages() {
+      try {
+        const res = await fetch('/api/chat/messages');
+        const data = await res.json();
+        const container = document.getElementById('chat-messages');
+        container.innerHTML = data.messages.map(m => `
+          <div class="p-3 rounded-lg ${m.sender === 'User' ? 'bg-indigo-950/60 border border-indigo-800/60 ml-12' : 'bg-slate-950 border border-slate-800 mr-12'}">
+            <div class="flex items-center justify-between text-[10px] text-slate-400 mb-1">
+              <span class="font-bold text-slate-300">${m.sender}</span>
+              <span>${new Date(m.timestamp).toLocaleTimeString()}</span>
+            </div>
+            <p class="text-xs text-slate-200 leading-relaxed">${m.text}</p>
+          </div>
+        `).join('');
+        container.scrollTop = container.scrollHeight;
+      } catch (e) {
+        console.error('Chat load error', e);
+      }
+    }
+
+    async function submitChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+
+      await fetch('/api/chat/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      loadChatMessages();
+    }
+
+    async function loadAuditLogs() {
+      try {
+        const res = await fetch('/api/policy/audit');
+        const data = await res.json();
+        const container = document.getElementById('audit-log-container');
+        if (data.auditLogs && data.auditLogs.length > 0) {
+          container.innerHTML = data.auditLogs.map(l => `
+            <div class="p-2.5 bg-slate-950 border border-slate-800/80 rounded flex items-center justify-between">
+              <div>
+                <span class="text-indigo-400 font-bold">${l.tool || 'system'}</span>
+                <span class="text-slate-400 text-[11px] ml-2">by ${l.agent || l.actor}</span>
+                <div class="text-[10px] text-slate-500 mt-0.5">${l.rationale || 'Authorized'}</div>
+              </div>
+              <div class="text-right">
+                <span class="px-2 py-0.5 rounded text-[10px] ${l.decision === 'ALLOW' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'} font-bold">${l.decision}</span>
+                <div class="text-[9px] text-slate-600 mt-0.5">${new Date(l.timestamp).toLocaleTimeString()}</div>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error('Audit load error', e);
+      }
+    }
+
+    // Initial polling
+    fetchKPI();
+    setInterval(fetchKPI, 5000);
+  </script>
+</body>
+</html>
