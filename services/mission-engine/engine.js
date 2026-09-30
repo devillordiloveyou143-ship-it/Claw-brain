@@ -108,7 +108,6 @@ class MissionEngine {
       summary: null
     };
 
-    // Construct Dynamic Task Graph with dependencies
     const taskDefs = [
       {
         id: `${missionId}_t1`,
@@ -245,7 +244,7 @@ class MissionEngine {
       totalTasks: mission.tasks.length,
       autonomousCompletionRate: '100%',
       humanInterventions: 0,
-      deployUrl: `https://${missionId}.staging.pandav.local`,
+      deployUrl: `/preview/app?missionId=${missionId}`,
       verifiedBy: 'YUDHISHTHIRA'
     };
 
@@ -277,7 +276,6 @@ class MissionEngine {
         if (!tests.success) throw new Error('Test suite failed in Doctor sandbox');
         return { build, tests };
       case 't5': // Engineer Security Sandbox
-        // Explicit authorized sandbox target parameter
         const secRes = await this.council.executeAgentAction('ADVOCATE', 'security_scan', missionId, {
           target: 'pandav-doctor'
         });

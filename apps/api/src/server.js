@@ -1,7 +1,7 @@
 /**
  * Pandav AI Core API Server
  * Exposes Unified REST & SSE Endpoints for:
- * - Web UI Frontend Delivery
+ * - Web UI Frontend Delivery & Live App Preview
  * - Helper Chat
  * - Doctor Workspace
  * - Engineer Security Sandbox
@@ -92,13 +92,21 @@ const server = http.createServer(async (req, res) => {
 
   try {
     // ---------------------------------------------
-    // Serve Web UI Frontend
+    // Serve Web UI Frontend & Live App Preview
     // ---------------------------------------------
     if (pathname === '/' || pathname === '/index.html') {
       const htmlPath = path.join(__dirname, '../../web/src/index.html');
       if (fs.existsSync(htmlPath)) {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         return res.end(fs.readFileSync(htmlPath, 'utf8'));
+      }
+    }
+
+    if (pathname === '/preview/app') {
+      const previewPath = path.join(__dirname, '../../web/src/preview.html');
+      if (fs.existsSync(previewPath)) {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        return res.end(fs.readFileSync(previewPath, 'utf8'));
       }
     }
 
@@ -135,7 +143,6 @@ const server = http.createServer(async (req, res) => {
       };
       chatMessages.push(userMsg);
 
-      // Helper AI response (Conversational, safe, no arbitrary autonomous exec)
       const aiResponse = await modelRouter.generateResponse({
         agentName: 'Helper',
         prompt: body.text || ''
@@ -166,9 +173,7 @@ const server = http.createServer(async (req, res) => {
       }
       const mission = missionEngine.createMission(body.objective);
 
-      // If autoStart is requested or default true for one-prompt flow
       if (body.autoStart !== false) {
-        // Trigger autonomous execution asynchronously
         setTimeout(() => {
           missionEngine.runAutonomousMission(mission.id).catch(console.error);
         }, 10);
@@ -299,7 +304,6 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { tools: toolRegistry.listTools() });
     }
 
-    // Fallback 404
     sendJson(res, 404, { error: 'Route not found' });
   } catch (err) {
     console.error('API Error:', err);
